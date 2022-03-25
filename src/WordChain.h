@@ -18,6 +18,7 @@ extern int edge[26][26];
 void countAndList(ofstream*);
 void maxWord(ofstream*);
 void distinctInitial(ofstream*);
+void maximizeLetter(ofstream*);
 bool hasRing();
 void getInDegree(int*);
 

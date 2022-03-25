@@ -13,6 +13,8 @@ static int read(int argc, char *argv[]) {
             handler = maxWord;
         } else if (strcmp(argv[i], "-m") == 0) {
             handler = distinctInitial;
+        } else if (strcmp(argv[i], "-c") == 0) {
+            handler = maximizeLetter;
         } else {
             #ifdef __linux__
                 file = fopen(argv[i], "r");
