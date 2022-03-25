@@ -10,7 +10,6 @@
 #include <string.h>
 #include <cassert>
 #include <set>
-
 using namespace std;
 
 extern vector<string> word[26][26];
@@ -18,6 +17,7 @@ extern int edge[26][26];
 
 void countAndList(ofstream*);
 void maxWord(ofstream*);
+void distinctInitial(ofstream*);
 bool hasRing();
 void getInDegree(int*);
 

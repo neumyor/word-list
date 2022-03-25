@@ -11,6 +11,8 @@ static int read(int argc, char *argv[]) {
             handler = countAndList;
         } else if (strcmp(argv[i], "-w") == 0) {
             handler = maxWord;
+        } else if (strcmp(argv[i], "-m") == 0) {
+            handler = distinctInitial;
         } else {
             #ifdef __linux__
                 file = fopen(argv[i], "r");
