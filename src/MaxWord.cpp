@@ -1,9 +1,12 @@
 #include "WordChain.h"
 
 static void noRingHandler(ofstream *out) {
-    DEBEG_REACHED
     int inDegreee[26];
-    getInDegree(inDegreee);
+    if (headLetter) {
+        headLetterInDegree(inDegreee);
+    } else {
+        getInDegree(inDegreee);
+    }
     queue<int> q;
     int dp[26];
     FOR_ALPHA(i) {
@@ -11,15 +14,13 @@ static void noRingHandler(ofstream *out) {
     }
     int last[26];
     memset(last, 0, sizeof(last));
-    DEBEG_REACHED
     FOR_ALPHA(i) {
         if (inDegreee[i] == 0) {
             q.push(i);
             dp[i] = edge[i][i];
-            last[i] = -1;
         }
+        last[i] = -1;
     }
-    DEBEG_REACHED
     while (!q.empty()) {
         int front = q.front();
         q.pop();
@@ -37,11 +38,15 @@ static void noRingHandler(ofstream *out) {
         }
     }
     int final;
-    int mx = 0;
-    FOR_ALPHA(i) {
-        if (dp[i] > mx) {
-            mx = dp[i];
-            final = i;
+    if (tailLetter) {
+        final = tailLetter - 'a';
+    } else {
+        int mx = 0;
+        FOR_ALPHA(i) {
+            if (dp[i] > mx) {
+                mx = dp[i];
+                final = i;
+            }
         }
     }
     stack<int> stk;

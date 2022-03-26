@@ -3,6 +3,7 @@ using namespace std;
 
 vector<string> word[26][26];
 int edge[26][26];
+char headLetter, tailLetter;
 static void (*handler)(ofstream*);
 static int read(int argc, char *argv[]) {
     FILE *file = NULL;
@@ -15,6 +16,12 @@ static int read(int argc, char *argv[]) {
             handler = distinctInitial;
         } else if (strcmp(argv[i], "-c") == 0) {
             handler = maximizeLetter;
+        } else if (strcmp(argv[i], "-h") == 0) {
+            i++;
+            headLetter = *argv[i];
+        } else if (strcmp(argv[i], "-t") == 0) {
+            i++;
+            tailLetter = *argv[i];
         } else {
             #ifdef __linux__
                 file = fopen(argv[i], "r");
@@ -75,6 +82,32 @@ void getInDegree(int *a) {
             }
         }
     }
+}
+
+void headLetterInDegree(int *a) {
+    FOR_ALPHA(i) {
+        a[i] = 0;
+    }
+    queue<int> q;
+    q.push(headLetter - 'a');
+    while (!q.empty()) {
+        int front = q.front();
+        q.pop();
+        FOR_ALPHA(i) {
+            if (i != front && edge[front][i]) {
+                if (a[i] == 0) {
+                    q.push(i);
+                }
+                a[i]++;
+            }
+        }
+    }    
+    FOR_ALPHA(i) {
+        if (a[i] == 0) {
+            a[i] = 0x3f3f3f;
+        }
+    }
+    a[headLetter - 'a'] = 0;
 }
 
 bool hasRing() {

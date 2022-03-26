@@ -2,7 +2,11 @@
 
 static void noRingHandler(ofstream *out) {
     int inDegreee[26];
-    getInDegree(inDegreee);
+    if (headLetter) {
+        headLetterInDegree(inDegreee);
+    } else {
+        getInDegree(inDegreee);
+    }
     queue<int> q;
     int dp[26];
     int selfLength[26];
@@ -19,8 +23,8 @@ static void noRingHandler(ofstream *out) {
         if (inDegreee[i] == 0) {
             q.push(i);
             dp[i] = selfLength[i];
-            last[i] = -1;
         }
+        last[i] = -1;
     }
     while (!q.empty()) {
         int front = q.front();
@@ -39,11 +43,15 @@ static void noRingHandler(ofstream *out) {
         }
     }
     int final;
-    int mx = 0;
-    FOR_ALPHA(i) {
-        if (dp[i] > mx) {
-            mx = dp[i];
-            final = i;
+    if (tailLetter) {
+        final = tailLetter - 'a';
+    } else {
+        int mx = 0;
+        FOR_ALPHA(i) {
+            if (dp[i] > mx) {
+                mx = dp[i];
+                final = i;
+            }
         }
     }
     stack<int> stk;

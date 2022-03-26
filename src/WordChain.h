@@ -14,6 +14,7 @@ using namespace std;
 
 extern vector<string> word[26][26];
 extern int edge[26][26];
+extern char headLetter, tailLetter;
 
 void countAndList(ofstream*);
 void maxWord(ofstream*);
@@ -21,6 +22,7 @@ void distinctInitial(ofstream*);
 void maximizeLetter(ofstream*);
 bool hasRing();
 void getInDegree(int*);
+void headLetterInDegree(int*);
 
 #define FOR_ALPHA(x) for(int x = 0; x < 26; x++)
 
