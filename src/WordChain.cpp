@@ -293,3 +293,54 @@ int main(int argc, char *argv[]) {
     (*handler)(&out);
     return 0;
 }
+
+extern "C" {
+    __declspec(dllexport) char* __stdcall call_by_cmd(int len, char* cmd);
+}
+
+char* temp_ret_ptr = NULL;
+char* call_by_cmd(int len, char* cmd) {
+    temp_ret_ptr = NULL;
+
+    istringstream input_cmd(cmd);
+    vector<string> temp_vec(0);
+    string out;
+
+    while (input_cmd >> out) {
+        temp_vec.push_back(out);
+    }
+
+    const int argc = temp_vec.size();
+    char** argv = new char* [argc];
+    for (int i = 0; i < argc; i++) {
+        cout << temp_vec[i] << endl;
+        argv[i] = new char[temp_vec[i].size() + 1];
+        strcpy_s(argv[i], temp_vec[i].size() + 1, temp_vec[i].c_str());
+    }
+
+    if (read(argc, argv) < 0) {
+        printf("File read failed\n");
+        return 0;
+    }
+
+    if (handler == NULL) {
+        printf("Unmatched params\n");
+        return 0;
+    }
+
+    stringstream ss;
+    streambuf* buffer = cout.rdbuf(); //oldbuffer,STDOUT的缓冲区
+    cout.rdbuf(ss.rdbuf());
+
+    ofstream out_stream("output.txt");
+    (*handler)(&out_stream);
+
+    string ret(ss.str());
+    cout.rdbuf(buffer); // 重置，重新载入STDOUT的缓冲区
+
+    delete[] temp_ret_ptr;
+    temp_ret_ptr = new char[strlen(ret.c_str()) + 1];
+    strcpy_s(temp_ret_ptr, strlen(ret.c_str()) + 1, ret.c_str());
+
+    return temp_ret_ptr;
+}

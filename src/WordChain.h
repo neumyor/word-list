@@ -10,6 +10,8 @@
 #include <string.h>
 #include <cassert>
 #include <set>
+#include <sstream>
+
 using namespace std;
 
 extern vector<string> word[26][26];
