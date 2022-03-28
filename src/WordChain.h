@@ -47,6 +47,4 @@ void bfsFromFinish(int);
         cout << __FILE__ << " " << __LINE__ << endl; \
     }
 
-typedef unsigned long long u64;
-
 #endif

@@ -88,7 +88,7 @@ static void dfs(int cur, int start, int length, int totLetter) {
     for (auto & i : sccElement[sccBelong[start]]) {
         if (edge[cur][i] > used[cur][i]) {
             used[cur][i]++;
-            dfs(i, start, length + 1, totLetter + word[cur][i][edge[cur][i] - used[cur][i]].length());
+            dfs(i, start, length + 1, totLetter + ((int) (word[cur][i][(long long)edge[cur][i] - used[cur][i]].length())));
             used[cur][i]--;
         }
     }
@@ -153,7 +153,7 @@ static void allowRingHandler(ofstream *out) {
                 for (auto &j : sccElement[front]) {
                     for (auto &k : sccElement[i]) {
                         if (edge[j][k] && maxOutLetter[j] + word[j][k].back().length() > maxInLetter[k]) {
-                            maxInLetter[k] = maxOutLetter[j] + word[j][k].back().length();
+                            maxInLetter[k] = maxOutLetter[j] + ((int) word[j][k].back().length());
                             outerLast[k] = j;
                         }
                     }

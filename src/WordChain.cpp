@@ -36,6 +36,11 @@ static int read(int argc, char *argv[]) {
             }
         }
     }
+
+    if (file == NULL) {
+        return -1;
+    }
+
     char c;
     string tmp;
     char start = 0, last = 0;
@@ -58,11 +63,15 @@ static int read(int argc, char *argv[]) {
         }
     }
     if (tmp.length() > 0) {
+    #pragma warning(push)
+    #pragma warning(disable:6385)
+    #pragma warning(disable:6386)
         if (tmp.length() > 1) {
             word[start - 'a'][last - 'a'].push_back(tmp);
         }
         tmp.clear();
         start = 0;
+    #pragma   warning(pop)  
     }
     fclose(file);
     FOR_ALPHA(i) {
@@ -70,7 +79,7 @@ static int read(int argc, char *argv[]) {
             sort(word[i][j].begin(), word[i][j].begin() + edge[i][j], [](string &x, string &y) -> bool {
                 return x.length() < y.length();
                 });
-            edge[i][j] = word[i][j].size();
+            edge[i][j] = (int) word[i][j].size();
         }
     }
     return 0;
@@ -310,7 +319,7 @@ char* call_by_cmd(int len, char* cmd) {
         temp_vec.push_back(out);
     }
 
-    const int argc = temp_vec.size();
+    const int argc = (int)temp_vec.size();
     char** argv = new char* [argc];
     for (int i = 0; i < argc; i++) {
         cout << temp_vec[i] << endl;

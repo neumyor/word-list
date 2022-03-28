@@ -12,7 +12,7 @@ static void noRingHandler(ofstream *out) {
     int selfLength[26];
     FOR_ALPHA(i) {
         if (edge[i][i]) {
-            selfLength[i] = word[i][i].back().length();
+            selfLength[i] = (int) word[i][i].back().length();
         } else {
             selfLength[i] = 0;
         }
@@ -32,7 +32,7 @@ static void noRingHandler(ofstream *out) {
         FOR_ALPHA(i) {
             if (i != front && edge[front][i]) {
                 if (word[front][i].back().length() + selfLength[i] + dp[front] > dp[i]) {
-                    dp[i] = word[front][i].back().length() + selfLength[i] + dp[front];
+                    dp[i] = ((int) word[front][i].back().length()) + selfLength[i] + dp[front];
                     last[i] = front;
                 }
                 inDegreee[i]--;

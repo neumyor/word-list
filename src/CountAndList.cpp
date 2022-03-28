@@ -1,7 +1,7 @@
 #include "WordChain.h"
 
-static u64 count() {
-    static u64 dp[26];
+static int count() {
+    static int dp[26];
     static int inDegree[26];
     queue<int> q;
     getInDegree(inDegree);
@@ -24,7 +24,7 @@ static u64 count() {
             }
         }
     }
-    u64 res = 0;
+    int res = 0;
     FOR_ALPHA(i) {
         res += dp[i] - 1;
         FOR_ALPHA(j) {
@@ -34,13 +34,13 @@ static u64 count() {
     return res;
 }
 
-u64 totChain;
+int totChain;
 string *previous[100];
 ofstream *out;
 static void dfs(int cur, int len) {
     FOR_ALPHA(i) {
         if (i != cur && edge[cur][i]) {
-            for (int j = word[cur][i].size() - 1; j >= 0; j--) {
+            for (int j = ((int) word[cur][i].size()) - 1; j >= 0; j--) {
                 previous[len + 1] = &word[cur][i][j];
                 if (len >= 1) {
                     for (int k = 1; k <= len + 1; k++) {
@@ -69,7 +69,7 @@ static void dfs(int cur, int len) {
         }
         FOR_ALPHA(i) {
             if (i != cur && edge[cur][i]) {
-                for (int j = word[cur][i].size() - 1; j >= 0; j--) {
+                for (int j = ((int) word[cur][i].size()) - 1; j >= 0; j--) {
                     previous[len + 1] = &word[cur][i][j];
                         if (len >= 1) {
                             for (int k = 1; k <= len + 1; k++) {
