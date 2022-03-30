@@ -52,12 +52,12 @@ private:
                         result[line] = (char*)malloc(size);
                         int length = 0;
                         for (int k = 1; k <= len; k++) {
-                            for (int u = 0; u < previous[k]->size(); u++) {
+                            for (int u = 0; u < (int)previous[k]->size(); u++) {
                                 result[line][length++] = (*previous[k])[u];
                             }
                             result[line][length++] = ' ';
                         }
-                        for (int k = 0; k < previous[len + 1]->size(); k++) {
+                        for (int k = 0; k < (int)previous[len + 1]->size(); k++) {
                             result[line][length++] = (*previous[len + 1])[k];
                         }
                         result[line][length++] = '\0';
@@ -79,12 +79,12 @@ private:
                 result[line] = (char*)malloc(size);
                 int length = 0;
                 for (int k = 1; k < len; k++) {
-                    for (int u = 0; u < previous[k]->size(); u++) {
+                    for (int u = 0; u < (int)previous[k]->size(); u++) {
                         result[line][length++] = (*previous[k])[u];
                     }
                     result[line][length++] = ' ';
                 }
-                for (int k = 0; k < previous[len]->size(); k++) {
+                for (int k = 0; k < (int)previous[len]->size(); k++) {
                     result[line][length++] = (*previous[len])[k];
                 }
                 result[line][length++] = '\0';
@@ -103,12 +103,12 @@ private:
                             result[line] = (char*)malloc(size);
                             int length = 0;
                             for (int k = 1; k <= len; k++) {
-                                for (int u = 0; u < previous[k]->size(); u++) {
+                                for (int u = 0; u < (int)previous[k]->size(); u++) {
                                     result[line][length++] = (*previous[k])[u];
                                 }
                                 result[line][length++] = ' ';
                             }
-                            for (int k = 0; k < previous[len + 1]->size(); k++) {
+                            for (int k = 0; k < (int)previous[len + 1]->size(); k++) {
                                 result[line][length++] = (*previous[len + 1])[k];
                             }
                             result[line][length++] = '\0';
@@ -142,7 +142,7 @@ public:
         tmp += '\0';
 
         if (result[line]) {
-            strcpy_s(result[line], tmp.size() + 1, tmp.c_str());
+            my_strcpy(result[line], tmp.c_str(), tmp.size());
         }
         
         line++;

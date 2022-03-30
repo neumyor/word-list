@@ -43,7 +43,7 @@ private:
                 }
             }
         }
-        int final, ret;
+        int final = -1, ret;
         if (tailLetter) {
             final = tailLetter - 'a';
             ret = dp[tailLetter - 'a'];
@@ -65,8 +65,7 @@ private:
             final = last[final];
         }
         if (stk.size() < 3) {
-            cout << "no chain" << endl;
-            return -1;
+            return 0;
         }
         final = stk.top();
         stk.pop();
@@ -123,14 +122,17 @@ private:
             }
         }
         queue<int> q;
-        static int innerLast[26], outerLast[26], maxInLength[26], maxOutLength[26];
+        int innerLast[26], outerLast[26], maxInLength[26], maxOutLength[26];
+        memset(innerLast, 0, sizeof(innerLast));
+        memset(maxInLength, 0, sizeof(maxInLength));
+        memset(maxOutLength, 0, sizeof(maxOutLength));
         FOR_SCC(i) {
             if (sccInDegree[i] == 0) {
                 q.push(i);
-                for (auto &j : sccElement[i]) {
-                    outerLast[j] = -1;
-                }
             }
+        }
+        FOR_ALPHA(i) {
+            outerLast[i] = -1;
         }
         while (!q.empty()) {
             int front = q.front();
@@ -160,10 +162,10 @@ private:
                 }
             }
         }
-        int final, ret;
+        int final = -1, ret;
         if (tailLetter) {
-            final = tailLetter - 'a';
             ret = maxOutLength[tailLetter - 'a'];
+            final = tailLetter - 'a';
         } else {
             ret = 0;
             FOR_ALPHA(i) {
@@ -178,6 +180,9 @@ private:
             stk.push(final);
             stk.push(innerLast[final]);
             final = outerLast[final];
+        }
+        if (stk.size() < 2) {
+            return 0;
         }
         while (true) {
             int entrance = stk.top();

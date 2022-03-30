@@ -1,5 +1,6 @@
 #pragma once
 #include "Handler.h"
+
 class DistinctInitial : public Handler {
 private:
     int ans[26];
@@ -11,7 +12,6 @@ public:
     }
 
     int handle() override {
-        
         if (hasRing()) {
             printf("has ring!\n");
             return -1;
@@ -19,7 +19,7 @@ public:
         queue<int> q;
         int inDegree[26];
         getInDegree(inDegree);
-        for (int i = 0; i < 26; i++) {
+        FOR_ALPHA(i) {
             if (inDegree[i] == 0) {
                 q.push(i);
             }
@@ -46,22 +46,19 @@ public:
         stack<int> stk;
         int ret = 0, final;
         FOR_ALPHA(i) {
+            ans[i] += edge[i][i];
             if (ans[i] > ret) {
                 ret = ans[i];
                 final = i;
             }
         }
-        
-        if (ret == 0) {
-            FOR_ALPHA(i) {
-                if (edge[i][i]) {
-                    appendToResult(word[i][i][0]);
-                    return 1;
-                }
-            }
-            return -1;
+        if (ret <= 1) {
+            return 0;
         }
         
+        if (edge[final][final]) {
+            stk.push(final);
+        }
         while (final >= 0) {
             stk.push(final);
             final = last[final];

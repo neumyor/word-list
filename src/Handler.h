@@ -17,24 +17,13 @@ protected:
             src++;
         }
     }
-    void appendToResult(string &s) {
-        
+
+    void appendToResult(string &s) {    
         result[line] = (char*)malloc(s.size() + 1);
         my_strcpy(result[line], s.c_str(), (int)s.size());
         result[line][s.size()] = '\0';
         line++;
-        
     }
-
-private:
-	void setEdge(vector<string> word[26][26]) {
-		FOR_ALPHA(i) {
-			FOR_ALPHA(j) {
-				this->word[i][j] = move(word[i][j]);
-				edge[i][j] = (int)this->word[i][j].size();
-			}
-		}
-	}
 
 protected:
     void getInDegree(int* a) {
@@ -48,6 +37,44 @@ protected:
         }
     }
 
+    void getOutDegree(int *a) {
+        FOR_ALPHA(i) {
+            a[i] = 0;
+            FOR_ALPHA(j) {
+                if (i != j && edge[i][j]) {
+                    a[i]++;
+                }
+            }
+        }
+    }
+
+private:
+	void setEdge(vector<string> word[26][26]) {
+		FOR_ALPHA(i) {
+			FOR_ALPHA(j) {
+				this->word[i][j] = move(word[i][j]);
+				edge[i][j] = (int)this->word[i][j].size();
+			}
+		}
+        int inDegree[26], outDegree[26];
+        getInDegree(inDegree);
+        getOutDegree(outDegree);
+        FOR_ALPHA(i) {
+            FOR_ALPHA(j) {
+                if (i != j) {
+                    if (edge[i][j] && !inDegree[i] && !edge[i][i] && !outDegree[j] && !edge[j][j]) {
+                        edge[i][j] = 0;
+                        this->word[i][j].clear();
+                    }
+                } else if (edge[i][j] == 1 && !inDegree[i] && !outDegree[j]) {
+                    edge[i][j] = 0;
+                    this->word[i][j].clear();
+                }
+            }
+        }
+	}
+
+protected:
     void headLetterInDegree(int* a) {
         FOR_ALPHA(i) {
             a[i] = 0;

@@ -15,7 +15,6 @@ private:
         int dp[26];
         int last[26];
         int selfLength[26];
-
         FOR_ALPHA(i) {
             if (edge[i][i]) {
                 selfLength[i] = (int)word[i][i].back().length();
@@ -26,10 +25,10 @@ private:
         memset(dp, 0, sizeof(dp));
         memset(last, 0, sizeof(last));
         FOR_ALPHA(i) {
+            last[i] = -1;
             if (inDegreee[i] == 0) {
                 q.push(i);
                 dp[i] = selfLength[i];
-                last[i] = -1;
             }
         }
         while (!q.empty()) {
@@ -37,7 +36,7 @@ private:
             q.pop();
             FOR_ALPHA(i) {
                 if (i != front && edge[front][i]) {
-                    if (word[front][i].back().length() + selfLength[i] + dp[front] > dp[i]) {
+                    if (((int)word[front][i].back().length()) + selfLength[i] + dp[front] > dp[i]) {
                         dp[i] = (int)word[front][i].back().length() + selfLength[i] + dp[front];
                         last[i] = front;
                     }
@@ -48,7 +47,7 @@ private:
                 }
             }
         }
-        int final, ret;
+        int final = -1, ret;
         if (tailLetter) {
             final = tailLetter - 'a';
             ret = dp[tailLetter - 'a'];
@@ -70,8 +69,7 @@ private:
             final = last[final];
         }
         if (stk.size() < 3) {
-            cout << "no chain" << endl;
-            return -1;
+            return 0;
         }
         final = stk.top();
         stk.pop();
@@ -141,16 +139,15 @@ private:
         queue<int> q;
         int innerLast[26], outerLast[26], maxInLetter[26], maxOutLetter[26];
         memset(innerLast, 0, sizeof(innerLast));
-        memset(outerLast, 0, sizeof(outerLast));
         memset(maxInLetter, 0, sizeof(maxInLetter));
         memset(maxOutLetter, 0, sizeof(maxOutLetter));
         FOR_SCC(i) {
             if (sccInDegree[i] == 0) {
                 q.push(i);
-                for (auto& j : sccElement[i]) {
-                    outerLast[j] = -1;
-                }
             }
+        }
+        FOR_ALPHA(i) {
+            outerLast[i] = -1;
         }
         while (!q.empty()) {
             int front = q.front();
@@ -167,7 +164,7 @@ private:
                 if (sccEdge[front][i]) {
                     for (auto& j : sccElement[front]) {
                         for (auto& k : sccElement[i]) {
-                            if (edge[j][k] && maxOutLetter[j] + word[j][k].back().length() > maxInLetter[k]) {
+                            if (edge[j][k] && maxOutLetter[j] + (int)word[j][k].back().length() > maxInLetter[k]) {
                                 maxInLetter[k] = maxOutLetter[j] + (int)word[j][k].back().length();
                                 outerLast[k] = j;
                             }
@@ -180,7 +177,7 @@ private:
                 }
             }
         }
-        int final, ret;
+        int final = -1, ret;
         if (tailLetter) {
             final = tailLetter - 'a';
             ret = maxOutLetter[tailLetter - 'a'];
@@ -198,6 +195,9 @@ private:
             stk.push(final);
             stk.push(innerLast[final]);
             final = outerLast[final];
+        }
+        if (stk.size() < 2) {
+            return 0;
         }
         while (true) {
             int entrance = stk.top();

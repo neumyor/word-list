@@ -21,6 +21,7 @@ enum class HandlerType {
     UNKNOWN
 };
 
+
 #define FOR_ALPHA(x) for(int x = 0; x < 26; x++)
 #define FOR_SCC(x) for(int x = 0; x < sccNumber; x++)
 
@@ -30,5 +31,5 @@ enum class HandlerType {
         cout << __FILE__ << " " << __LINE__ << endl; \
     }
 #define MAX_RESULT_LINE 10000
-
+#pragma warning(disable:4251)
 #endif

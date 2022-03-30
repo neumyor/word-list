@@ -54,7 +54,7 @@ static void read(int argc, char *argv[]) {
         } else if (tmp.length() > 0) {
             if (tmp.length() > 1) {
                 char *c = (char*)malloc(tmp.length() + 1);
-                for (int i = 0; i < tmp.length(); i++) {
+                for (int i = 0; i < (int)tmp.length(); i++) {
                     c[i] = tmp[i];
                 }
                 c[tmp.length()] = 0;
@@ -72,12 +72,10 @@ static void read(int argc, char *argv[]) {
         if (tmp.length() > 1) {
             char *c = (char*)malloc(tmp.length() + 1);
             if (c) {
-                for (int i = 0; i < tmp.length(); i++) {
+                for (int i = 0; i < (int)tmp.length(); i++) {
                     c[i] = tmp[i];
                 }
-            
                 c[tmp.length()] = 0;
-
                 word.push_back(c);
             }
         }
@@ -87,20 +85,20 @@ static void read(int argc, char *argv[]) {
     }
 
     fclose(file);
-    //static char* result = new char* [MAX_RESULT_LINE];
     static char *result[MAX_RESULT_LINE];
+    int ret;
     switch (type) {
     case HandlerType::COUNT_AND_LIST:
-        Core::gen_chains_all(&word[0], (int)word.size(), result);
+        ret = Core::gen_chains_all(&word[0], (int)word.size(), result);
         break;
     case HandlerType::DISTINCT_INITIAL:
-        Core::gen_chain_word_unique(&word[0], (int)word.size(), result);
+        ret = Core::gen_chain_word_unique(&word[0], (int)word.size(), result);
         break;
     case HandlerType::MAX_WORD:
-        Core::gen_chain_word(&word[0], (int)word.size(), result, headLetter, tailLetter, allowRing);
+        ret = Core::gen_chain_word(&word[0], (int)word.size(), result, headLetter, tailLetter, allowRing);
         break;
     case HandlerType::MAX_LETTER:
-        Core::gen_chain_char(&word[0], (int)word.size(), result, headLetter, tailLetter, allowRing);
+        ret = Core::gen_chain_char(&word[0], (int)word.size(), result, headLetter, tailLetter, allowRing);
         break;
     default:
         cout << "unmatch type" << endl;
@@ -111,14 +109,13 @@ static void read(int argc, char *argv[]) {
         cout << result[i] << endl;
         free(result[i]);
         result[i] = nullptr;
-        
     }
     
     for (auto &i : word) {
         free(i);
     }
     
-
+    cout << "return value: " << ret << endl;
 }
 
 int main(int argc, char *argv[]) {
@@ -129,10 +126,14 @@ int main(int argc, char *argv[]) {
 #ifdef _WIN32
 extern "C" {
     __declspec(dllexport) char* __stdcall call_by_cmd(int len, char* cmd);
+    __declspec(dllexport) int __stdcall gen_chain_word(char* words[], int len, char* result[], char head, char tail, bool enable_loop);
+    __declspec(dllexport) int __stdcall gen_chains_all(char* words[], int len, char* result[]);
+    __declspec(dllexport) int __stdcall gen_chain_word_unique(char* words[], int len, char* result[]);
+    __declspec(dllexport) int __stdcall gen_chain_char(char* words[], int len, char* result[], char head, char tail, bool enable_loop);
 }
 
 char* temp_ret_ptr = NULL;
-char* call_by_cmd(int len, char* cmd) {
+__declspec(dllexport) char* __stdcall call_by_cmd(int len, char* cmd) {
     temp_ret_ptr = NULL;
 
     istringstream input_cmd(cmd);
@@ -146,7 +147,6 @@ char* call_by_cmd(int len, char* cmd) {
     const int argc = (int)temp_vec.size();
     char** argv = new char* [argc];
     for (int i = 0; i < argc; i++) {
-        cout << temp_vec[i] << endl;
         argv[i] = new char[temp_vec[i].size() + 1];
         strcpy_s(argv[i], temp_vec[i].size() + 1, temp_vec[i].c_str());
     }
@@ -160,18 +160,33 @@ char* call_by_cmd(int len, char* cmd) {
     string ret(ss.str());
     cout.rdbuf(buffer);
 
-
     if (temp_ret_ptr) {
-        cout << "C++ first" << endl;
         delete[] temp_ret_ptr;
         temp_ret_ptr = NULL;
-        cout << "C++ next" << endl;
     }
+
     ret += '\0';
-    cout << ret << endl;
     temp_ret_ptr = new char[ret.size() + 1];
     strcpy_s(temp_ret_ptr, ret.size() + 1, ret.c_str());
 
     return temp_ret_ptr;
 }
+
+
+__declspec(dllexport) int __stdcall gen_chain_word(char* words[], int len, char* result[], char head, char tail, bool enable_loop) {
+    return Core::gen_chain_word(words, len, result, head, tail, enable_loop);
+}
+
+__declspec(dllexport) int __stdcall gen_chains_all(char* words[], int len, char* result[]) {
+    return Core::gen_chains_all(words, len, result);
+}
+
+__declspec(dllexport) int __stdcall gen_chain_word_unique(char* words[], int len, char* result[]) {
+    return Core::gen_chain_word_unique(words, len, result);
+}
+
+__declspec(dllexport) int __stdcall gen_chain_char(char* words[], int len, char* result[], char head, char tail, bool enable_loop) {
+    return Core::gen_chain_char(words, len, result, head, tail, enable_loop);
+}
+
 #endif
