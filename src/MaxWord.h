@@ -214,7 +214,6 @@ public:
 	int handle() override {
         if (!allowRing) {
             if (hasRing()) {
-                cout << "has ring" << endl;
                 return -1;
             }
             return noRingHandler();

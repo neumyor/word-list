@@ -142,7 +142,7 @@ public:
         tmp += '\0';
 
         if (result[line]) {
-            my_strcpy(result[line], tmp.c_str(), tmp.size());
+            my_strcpy(result[line], tmp.c_str(), (int)tmp.size());
         }
         
         line++;

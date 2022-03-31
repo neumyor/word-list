@@ -314,5 +314,95 @@ namespace unittest
 			Assert::AreEqual(Core::gen_chain_char(&(words[0]), inputSize, result, 'a', 'f', true), 0);
 			Assert::AreEqual(Core::gen_chain_word(&(words[0]), inputSize, result, 'i', 'z', true), 0);
 		}
+
+		TEST_METHOD(TestCmdError_1_1) {
+			string cmd = "wordlist.exe -w temp.txt -h G";
+			cmd += '\0';
+			char* cmdArray = (char*)malloc(sizeof(char) * (cmd.size() + 1));
+			if (cmdArray != NULL) {
+				strcpy_s(cmdArray, cmd.size(), cmd.c_str());
+			}
+			Assert::AreEqual("need lowercase letter after \'-h\'\n", call_by_cmd(cmd.size(), cmdArray));
+		}
+
+		TEST_METHOD(TestCmdError_1_2) {
+			string cmd = "wordlist.exe -w temp.txt -t G";
+			cmd += '\0';
+			char* cmdArray = (char*)malloc(sizeof(char) * (cmd.size() + 1));
+			if (cmdArray != NULL) {
+				strcpy_s(cmdArray, cmd.size(), cmd.c_str());
+			}
+			Assert::AreEqual("need lowercase letter after \'-t\'\n", call_by_cmd(cmd.size(), cmdArray));
+		}
+
+		TEST_METHOD(TestCmdError_2_1) {
+			string cmd = "wordlist.exe -w temp.txt -h k -h g";
+			cmd += '\0';
+			char* cmdArray = (char*)malloc(sizeof(char) * (cmd.size() + 1));
+			if (cmdArray != NULL) {
+				strcpy_s(cmdArray, cmd.size(), cmd.c_str());
+			}
+			Assert::AreEqual("multiple head\n", call_by_cmd(cmd.size(), cmdArray));
+		}
+
+		TEST_METHOD(TestCmdError_2_2) {
+			string cmd = "wordlist.exe -w temp.txt -t k -t g";
+			cmd += '\0';
+			char* cmdArray = (char*)malloc(sizeof(char) * (cmd.size() + 1));
+			if (cmdArray != NULL) {
+				strcpy_s(cmdArray, cmd.size(), cmd.c_str());
+			}
+			Assert::AreEqual("multiple tail\n", call_by_cmd(cmd.size(), cmdArray));
+		}
+
+		TEST_METHOD(TestCmdError_3) {
+			string cmd = "wordlist.exe -w temp.txt another.txt";
+			cmd += '\0';
+			char* cmdArray = (char*)malloc(sizeof(char) * (cmd.size() + 1));
+			if (cmdArray != NULL) {
+				strcpy_s(cmdArray, cmd.size(), cmd.c_str());
+			}
+			Assert::AreEqual("multiple files found\n", call_by_cmd(cmd.size(), cmdArray));
+		}
+
+		TEST_METHOD(TestCmdError_4) {
+			string cmd = "wordlist.exe -w another.txt";
+			cmd += '\0';
+			char* cmdArray = (char*)malloc(sizeof(char) * (cmd.size() + 1));
+			if (cmdArray != NULL) {
+				strcpy_s(cmdArray, cmd.size(), cmd.c_str());
+			}
+			Assert::AreEqual("can't find file\n", call_by_cmd(cmd.size(), cmdArray));
+		}
+
+		TEST_METHOD(TestCmdError_5) {
+			string cmd = "wordlist.exe -w";
+			cmd += '\0';
+			char* cmdArray = (char*)malloc(sizeof(char) * (cmd.size() + 1));
+			if (cmdArray != NULL) {
+				strcpy_s(cmdArray, cmd.size(), cmd.c_str());
+			}
+			Assert::AreEqual("no input file\n", call_by_cmd(cmd.size(), cmdArray));
+		}
+
+		TEST_METHOD(TestCmdError_6) {
+			string cmd = "wordlist.exe temp.txt";
+			cmd += '\0';
+			char* cmdArray = (char*)malloc(sizeof(char) * (cmd.size() + 1));
+			if (cmdArray != NULL) {
+				strcpy_s(cmdArray, cmd.size(), cmd.c_str());
+			}
+			Assert::AreEqual("unmatch type\n", call_by_cmd(cmd.size(), cmdArray));
+		}
+
+		TEST_METHOD(TestCmdError_7) {
+			string cmd = "wordlist.exe -w temp.txt";
+			cmd += '\0';
+			char* cmdArray = (char*)malloc(sizeof(char) * (cmd.size() + 1));
+			if (cmdArray != NULL) {
+				strcpy_s(cmdArray, cmd.size(), cmd.c_str());
+			}
+			Assert::AreEqual("has cycle\n", call_by_cmd(cmd.size(), cmdArray));
+		}
 	};
 }

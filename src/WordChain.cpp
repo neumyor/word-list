@@ -1,10 +1,22 @@
 #include "Core.h"
 using namespace std;
 
+static char headLetter = 0, tailLetter = 0;
+static bool allowRing = false;
+static void warning() {
+    if (headLetter) {
+        cout << "warning: head letter specification is ignored" << endl;
+    }
+    if (tailLetter) {
+        cout << "warning: tail letter specification is ignored" << endl;
+    }
+    if (allowRing) {
+        cout << "warning: cycle allowance is ignored" << endl;
+    }
+}
+
 static void read(int argc, char *argv[]) {
     vector<char*> word;
-    char headLetter = 0, tailLetter = 0;
-    bool allowRing = false;
     FILE *file = NULL;
     HandlerType type = HandlerType::UNKNOWN;
 
@@ -19,22 +31,53 @@ static void read(int argc, char *argv[]) {
             type = HandlerType::MAX_LETTER;
         } else if (strcmp(argv[i], "-h") == 0) {
             i++;
-            headLetter = *argv[i];
+            if (strlen(argv[i]) > 1 || *argv[i] < 'a' || *argv[i] > 'z') {
+                cout << "need lowercase letter after '-h'" << endl;
+            } else if (headLetter) {
+                cout << "multiple head" << endl;
+            } else {
+                headLetter = *argv[i];
+                continue;
+            }
+            if (file != NULL) {
+                fclose(file);
+            }
+            return;
         } else if (strcmp(argv[i], "-t") == 0) {
             i++;
-            tailLetter = *argv[i];
+            if (strlen(argv[i]) > 1 || *argv[i] < 'a' || *argv[i] > 'z') {
+                cout << "need lowercase letter after '-t'" << endl;
+            } else if (tailLetter) {
+                cout << "multiple tail" << endl;
+            } else {
+                tailLetter = *argv[i];
+                continue;
+            }
+            if (file != NULL) {
+                fclose(file);
+            }
+            return;
         } else if (strcmp(argv[i], "-r") == 0) {
             allowRing = true;
         } else {
+            if (file != NULL) {
+                cout << "multiple files found" << endl;
+                fclose(file);
+                return;
+            }
             #ifdef __linux__
                 file = fopen(argv[i], "r");
             #else
                 fopen_s(&file, argv[i], "r");
             #endif
+            if (file == NULL) {
+                cout << "can't find file" << endl;
+                return;
+            }
         }
     }
     if (file == NULL) {
-        cout << "can't find file" << endl;
+        cout << "no input file" << endl;
         return;
     }
 
@@ -89,9 +132,11 @@ static void read(int argc, char *argv[]) {
     int ret;
     switch (type) {
     case HandlerType::COUNT_AND_LIST:
+        warning();
         ret = Core::gen_chains_all(&word[0], (int)word.size(), result);
         break;
     case HandlerType::DISTINCT_INITIAL:
+        warning();
         ret = Core::gen_chain_word_unique(&word[0], (int)word.size(), result);
         break;
     case HandlerType::MAX_WORD:
@@ -104,7 +149,11 @@ static void read(int argc, char *argv[]) {
         cout << "unmatch type" << endl;
         return;
     }
-    
+
+    if (ret == -1) {
+        cout << "has cycle" << endl;
+        return;
+    }
     for (int i = 0; result[i] != nullptr; i++) {
         cout << result[i] << endl;
         free(result[i]);
@@ -114,7 +163,6 @@ static void read(int argc, char *argv[]) {
     for (auto &i : word) {
         free(i);
     }
-    
     cout << "return value: " << ret << endl;
 }
 
@@ -122,6 +170,7 @@ int main(int argc, char *argv[]) {
     read(argc, argv);
     return 0;
 }
+
 
 #ifdef _WIN32
 extern "C" {

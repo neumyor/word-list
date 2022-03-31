@@ -13,7 +13,6 @@ public:
 
     int handle() override {
         if (hasRing()) {
-            printf("has ring!\n");
             return -1;
         }
         queue<int> q;
