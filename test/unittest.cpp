@@ -404,5 +404,55 @@ namespace unittest
 			}
 			Assert::AreEqual("has cycle\n", call_by_cmd(cmd.size(), cmdArray));
 		}
+
+		TEST_METHOD(TestCmdError_8_1) {
+			string cmd = "wordlist.exe -w temp.txt -h";
+			cmd += '\0';
+			char* cmdArray = (char*)malloc(sizeof(char) * (cmd.size() + 1));
+			if (cmdArray != NULL) {
+				strcpy_s(cmdArray, cmd.size(), cmd.c_str());
+			}
+			Assert::AreEqual("need lowercase letter after \'-h\'\n", call_by_cmd(cmd.size(), cmdArray));
+		}
+
+		TEST_METHOD(TestCmdError_8_2) {
+			string cmd = "wordlist.exe -w temp.txt -t";
+			cmd += '\0';
+			char* cmdArray = (char*)malloc(sizeof(char) * (cmd.size() + 1));
+			if (cmdArray != NULL) {
+				strcpy_s(cmdArray, cmd.size(), cmd.c_str());
+			}
+			Assert::AreEqual("need lowercase letter after \'-t\'\n", call_by_cmd(cmd.size(), cmdArray));
+		}
+
+		TEST_METHOD(TestCmdWarning_1) {
+			string cmd = "wordlist.exe -n temp.txt -r";
+			cmd += '\0';
+			char* cmdArray = (char*)malloc(sizeof(char) * (cmd.size() + 1));
+			if (cmdArray != NULL) {
+				strcpy_s(cmdArray, cmd.size(), cmd.c_str());
+			}
+			Assert::AreEqual("warning: cycle allowance is ignored\nhas cycle\n", call_by_cmd(cmd.size(), cmdArray));
+		}
+
+		TEST_METHOD(TestCmdWarning_2) {
+			string cmd = "wordlist.exe -n temp.txt -h f";
+			cmd += '\0';
+			char* cmdArray = (char*)malloc(sizeof(char) * (cmd.size() + 1));
+			if (cmdArray != NULL) {
+				strcpy_s(cmdArray, cmd.size(), cmd.c_str());
+			}
+			Assert::AreEqual("warning: head letter specification is ignored\nhas cycle\n", call_by_cmd(cmd.size(), cmdArray));
+		}
+
+		TEST_METHOD(TestCmdWarning_3) {
+			string cmd = "wordlist.exe -n temp.txt -t f";
+			cmd += '\0';
+			char* cmdArray = (char*)malloc(sizeof(char) * (cmd.size() + 1));
+			if (cmdArray != NULL) {
+				strcpy_s(cmdArray, cmd.size(), cmd.c_str());
+			}
+			Assert::AreEqual("warning: tail letter specification is ignored\nhas cycle\n", call_by_cmd(cmd.size(), cmdArray));
+		}
 	};
 }

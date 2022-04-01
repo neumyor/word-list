@@ -22,16 +22,32 @@ static void read(int argc, char *argv[]) {
 
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "-n") == 0) {
+            if (type != HandlerType::UNKNOWN) {
+                cout << "multiple type" << endl;
+                return;
+            }
             type = HandlerType::COUNT_AND_LIST;
         } else if (strcmp(argv[i], "-w") == 0) {
+            if (type != HandlerType::UNKNOWN) {
+                cout << "multiple type" << endl;
+                return;
+            }
             type = HandlerType::MAX_WORD;
         } else if (strcmp(argv[i], "-m") == 0) {
+            if (type != HandlerType::UNKNOWN) {
+                cout << "multiple type" << endl;
+                return;
+            }
             type = HandlerType::DISTINCT_INITIAL;
         } else if (strcmp(argv[i], "-c") == 0) {
+            if (type != HandlerType::UNKNOWN) {
+                cout << "multiple type" << endl;
+                return;
+            }
             type = HandlerType::MAX_LETTER;
         } else if (strcmp(argv[i], "-h") == 0) {
             i++;
-            if (strlen(argv[i]) > 1 || *argv[i] < 'a' || *argv[i] > 'z') {
+            if (i >= argc || strlen(argv[i]) > 1 || *argv[i] < 'a' || *argv[i] > 'z') {
                 cout << "need lowercase letter after '-h'" << endl;
             } else if (headLetter) {
                 cout << "multiple head" << endl;
@@ -45,7 +61,7 @@ static void read(int argc, char *argv[]) {
             return;
         } else if (strcmp(argv[i], "-t") == 0) {
             i++;
-            if (strlen(argv[i]) > 1 || *argv[i] < 'a' || *argv[i] > 'z') {
+            if (i >= argc || strlen(argv[i]) > 1 || *argv[i] < 'a' || *argv[i] > 'z') {
                 cout << "need lowercase letter after '-t'" << endl;
             } else if (tailLetter) {
                 cout << "multiple tail" << endl;
@@ -60,6 +76,11 @@ static void read(int argc, char *argv[]) {
         } else if (strcmp(argv[i], "-r") == 0) {
             allowRing = true;
         } else {
+            int l = (int)strlen(argv[i]);
+            if (argv[i][l - 3] != 't' || argv[i][l - 2] != 'x' || argv[i][l - 1] != 't') {
+                cout << argv[i] << " is neither a text file nor an argument" << endl;
+                return;
+            }
             if (file != NULL) {
                 cout << "multiple files found" << endl;
                 fclose(file);
@@ -183,7 +204,10 @@ extern "C" {
 
 char* temp_ret_ptr = NULL;
 __declspec(dllexport) char* __stdcall call_by_cmd(int len, char* cmd) {
-    temp_ret_ptr = NULL;
+    if (temp_ret_ptr) {
+        delete[] temp_ret_ptr;
+        temp_ret_ptr = NULL;
+    }
 
     istringstream input_cmd(cmd);
     vector<string> temp_vec(0);
