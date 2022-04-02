@@ -144,7 +144,6 @@ public:
         if (result[line]) {
             my_strcpy(result[line], tmp.c_str(), (int)tmp.size());
         }
-        
         line++;
         
         FOR_ALPHA(i) {

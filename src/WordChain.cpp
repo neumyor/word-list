@@ -77,7 +77,7 @@ static void read(int argc, char *argv[]) {
             allowRing = true;
         } else {
             int l = (int)strlen(argv[i]);
-            if (argv[i][l - 3] != 't' || argv[i][l - 2] != 'x' || argv[i][l - 1] != 't') {
+            if (l < 4 || argv[i][l - 4] != '.' || argv[i][l - 3] != 't' || argv[i][l - 2] != 'x' || argv[i][l - 1] != 't') {
                 cout << argv[i] << " is neither a text file nor an argument" << endl;
                 return;
             }
@@ -175,8 +175,10 @@ static void read(int argc, char *argv[]) {
         cout << "has cycle" << endl;
         return;
     }
+    ofstream fout("solution.txt");
     for (int i = 0; result[i] != nullptr; i++) {
         cout << result[i] << endl;
+        fout << result[i] << endl;
         free(result[i]);
         result[i] = nullptr;
     }
@@ -204,10 +206,7 @@ extern "C" {
 
 char* temp_ret_ptr = NULL;
 __declspec(dllexport) char* __stdcall call_by_cmd(int len, char* cmd) {
-    if (temp_ret_ptr) {
-        delete[] temp_ret_ptr;
-        temp_ret_ptr = NULL;
-    }
+    temp_ret_ptr = NULL;
 
     istringstream input_cmd(cmd);
     vector<string> temp_vec(0);
