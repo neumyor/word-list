@@ -179,7 +179,7 @@ private:
         while (final >= 0) {
             stk.push(final);
             stk.push(innerLast[final]);
-            final = outerLast[final];
+            final = outerLast[innerLast[final]];
         }
         if (stk.size() < 2) {
             return 0;
@@ -191,6 +191,7 @@ private:
             int *finish = maxRoute[entrance][exit] + maxLength[entrance][exit];
             for (int *i = maxRoute[entrance][exit] + 1; i <= finish; i++) {
                 appendToResult(word[*(i - 1)][*i].back());
+                delete word[*(i - 1)][*i].back();
                 word[*(i - 1)][*i].pop_back();
             }
             stk.pop();
@@ -198,12 +199,13 @@ private:
                 break;
             }
             appendToResult(word[exit][stk.top()].back());
+            delete word[exit][stk.top()].back();
             word[exit][stk.top()].pop_back();
         }
         return ret;
     }
 public:
-    MaxWord(char head, char tail, bool allowRing, vector<string> word[26][26], char **result) :
+    MaxWord(char head, char tail, bool allowRing, StringSet word[26][26], char **result) :
         MaxHandler(head, tail, allowRing, word, result) {
         memset(route, 0, sizeof(route));
         memset(used, 0, sizeof(used));

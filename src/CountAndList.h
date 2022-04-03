@@ -7,43 +7,12 @@ private:
     int inDegree[26];
     int totChain;
     string* previous[100];
-    int count() {
-        queue<int> q;
-        getInDegree(inDegree);
-        FOR_ALPHA(i) {
-            dp[i] = 1 + edge[i][i];
-            if (inDegree[i] == 0) {
-                q.push(i);
-            }
-        }
-        while (!q.empty()) {
-            int front = q.front();
-            q.pop();
-            FOR_ALPHA(i) {
-                if (i != front && edge[front][i]) {
-                    inDegree[i]--;
-                    dp[i] += (1 + edge[i][i]) * dp[front] * edge[front][i];
-                    if (inDegree[i] == 0) {
-                        q.push(i);
-                    }
-                }
-            }
-        }
-        int res = 0;
-        FOR_ALPHA(i) {
-            res += dp[i] - 1;
-            FOR_ALPHA(j) {
-                res -= edge[i][j];
-            }
-        }
-        return res;
-    }
 
     void dfs(int cur, int len) {
         FOR_ALPHA(i) {
             if (i != cur && edge[cur][i]) {
                 for (int j = ((int)word[cur][i].size()) - 1; j >= 0; j--) {
-                    previous[len + 1] = &word[cur][i][j];
+                    previous[len + 1] = word[cur][i][j];
                     if (len >= 1) {
                         int size = 0;
                         for (int k = 1; k <= len + 1; k++) {
@@ -62,15 +31,21 @@ private:
                         }
                         result[line][length++] = '\0';
                         line++;
-                        totChain--;
+                        totChain++;
+                        if (totChain > MAX_RESULT_LINE) {
+                            return;
+                        }
                     }
                     dfs(i, len + 1);
+                    if (totChain > MAX_RESULT_LINE) {
+                        return;
+                    }
                 }
             }
         }
         if (edge[cur][cur]) {
             len++;
-            previous[len] = &word[cur][cur][0];
+            previous[len] = word[cur][cur][0];
             if (len >= 2) {
                 int size = 0;
                 for (int k = 1; k <= len; k++) {
@@ -89,12 +64,15 @@ private:
                 }
                 result[line][length++] = '\0';
                 line++;
-                totChain--;
+                totChain++;
+                if (totChain > MAX_RESULT_LINE) {
+                    return;
+                }
             }
             FOR_ALPHA(i) {
                 if (i != cur && edge[cur][i]) {
                     for (int j = ((int)word[cur][i].size()) - 1; j >= 0; j--) {
-                        previous[len + 1] = &word[cur][i][j];
+                        previous[len + 1] = word[cur][i][j];
                         if (len >= 1) {
                             int size = 0;
                             for (int k = 1; k <= len + 1; k++) {
@@ -113,9 +91,15 @@ private:
                             }
                             result[line][length++] = '\0';
                             line++;
-                            totChain--;
+                            totChain++;
+                            if (totChain > MAX_RESULT_LINE) {
+                                return;
+                            }
                         }
                         dfs(i, len + 1);
+                        if (totChain > MAX_RESULT_LINE) {
+                            return;
+                        }
                     }
                 }
             }
@@ -123,7 +107,7 @@ private:
     }
 
 public:
-	CountAndList(vector<string> word[26][26], char **result) : Handler(word, result) {
+	CountAndList(StringSet word[26][26], char **result) : Handler(word, result) {
         totChain = 0;
         memset(dp, 0, sizeof(dp));
         memset(previous, 0, sizeof(previous));
@@ -134,23 +118,15 @@ public:
             printf("has ring\n");
             return -1;
         }
-        int ret;
-        ret = totChain = count();
         result[line] = (char*)malloc(10);
 
-        string tmp = to_string(totChain);
-        tmp += '\0';
-
-        if (result[line]) {
-            my_strcpy(result[line], tmp.c_str(), (int)tmp.size());
-        }
-        line++;
-        
         FOR_ALPHA(i) {
             dfs(i, 0);
+            if (totChain > MAX_RESULT_LINE) {
+                break;
+            }
         }
-        assert(totChain == 0);
-        return ret;
+        return totChain;
 	}
 };
 

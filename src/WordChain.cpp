@@ -3,6 +3,7 @@ using namespace std;
 
 static char headLetter = 0, tailLetter = 0;
 static bool allowRing = false;
+
 static void warning() {
     if (headLetter) {
         cout << "warning: head letter specification is ignored" << endl;
@@ -13,6 +14,23 @@ static void warning() {
     if (allowRing) {
         cout << "warning: cycle allowance is ignored" << endl;
     }
+}
+
+static inline bool isAlpha(char c) {
+    if ('a' <= c && c <= 'z') {
+        return true;
+    }
+    if ('A' <= c && c <= 'Z') {
+        return true;
+    }
+    return false;
+}
+
+static inline char toLowercase(char c) {
+    if ('a' <= c && c <= 'z') {
+        return c;
+    }
+    return c - 'A' + 'a';
 }
 
 static void read(int argc, char *argv[]) {
@@ -47,12 +65,12 @@ static void read(int argc, char *argv[]) {
             type = HandlerType::MAX_LETTER;
         } else if (strcmp(argv[i], "-h") == 0) {
             i++;
-            if (i >= argc || strlen(argv[i]) > 1 || *argv[i] < 'a' || *argv[i] > 'z') {
-                cout << "need lowercase letter after '-h'" << endl;
+            if (i >= argc || strlen(argv[i]) > 1 || !isAlpha(*argv[i])) {
+                cout << "need letter after '-h'" << endl;
             } else if (headLetter) {
                 cout << "multiple head" << endl;
             } else {
-                headLetter = *argv[i];
+                headLetter = toLowercase(*argv[i]);
                 continue;
             }
             if (file != NULL) {
@@ -61,12 +79,12 @@ static void read(int argc, char *argv[]) {
             return;
         } else if (strcmp(argv[i], "-t") == 0) {
             i++;
-            if (i >= argc || strlen(argv[i]) > 1 || *argv[i] < 'a' || *argv[i] > 'z') {
-                cout << "need lowercase letter after '-t'" << endl;
+            if (i >= argc || strlen(argv[i]) > 1 || !isAlpha(*argv[i])) {
+                cout << "need letter after '-t'" << endl;
             } else if (tailLetter) {
                 cout << "multiple tail" << endl;
             } else {
-                tailLetter = *argv[i];
+                tailLetter = toLowercase(*argv[i]);
                 continue;
             }
             if (file != NULL) {
@@ -149,12 +167,20 @@ static void read(int argc, char *argv[]) {
     }
 
     fclose(file);
-    static char *result[MAX_RESULT_LINE];
+    static char *result[MAX_RESULT_LINE + 5];
     int ret;
+    ofstream fout("solution.txt");
     switch (type) {
     case HandlerType::COUNT_AND_LIST:
         warning();
         ret = Core::gen_chains_all(&word[0], (int)word.size(), result);
+        if (ret > MAX_RESULT_LINE) {
+            cout << "too many chains" << endl;
+            fout << "too many chains" << endl;
+        } else if (ret >= 0) {
+            cout << ret << endl;
+            fout << ret << endl;
+        }
         break;
     case HandlerType::DISTINCT_INITIAL:
         warning();
@@ -175,7 +201,6 @@ static void read(int argc, char *argv[]) {
         cout << "has cycle" << endl;
         return;
     }
-    ofstream fout("solution.txt");
     for (int i = 0; result[i] != nullptr; i++) {
         cout << result[i] << endl;
         fout << result[i] << endl;
@@ -186,13 +211,26 @@ static void read(int argc, char *argv[]) {
     for (auto &i : word) {
         free(i);
     }
+    if (ret > MAX_RESULT_LINE) {
+        cout << "..." << endl;
+    }
     cout << "return value: " << ret << endl;
 }
 
+#ifdef Release
+
 int main(int argc, char *argv[]) {
     read(argc, argv);
+
+    headLetter = 0;
+    tailLetter = 0;
+    allowRing = false;
     return 0;
 }
+
+#endif // Release
+
+
 
 
 #ifdef _WIN32
@@ -206,7 +244,10 @@ extern "C" {
 
 char* temp_ret_ptr = NULL;
 __declspec(dllexport) char* __stdcall call_by_cmd(int len, char* cmd) {
-    temp_ret_ptr = NULL;
+    if (temp_ret_ptr) {
+        delete[] temp_ret_ptr;
+        temp_ret_ptr = NULL;
+    }
 
     istringstream input_cmd(cmd);
     vector<string> temp_vec(0);
@@ -232,19 +273,18 @@ __declspec(dllexport) char* __stdcall call_by_cmd(int len, char* cmd) {
     string ret(ss.str());
     cout.rdbuf(buffer);
 
-    if (temp_ret_ptr) {
-        delete[] temp_ret_ptr;
-        temp_ret_ptr = NULL;
-    }
-
     ret += '\0';
     temp_ret_ptr = new char[ret.size() + 1];
     strcpy_s(temp_ret_ptr, ret.size() + 1, ret.c_str());
 
+    headLetter = 0;
+    tailLetter = 0;
+    allowRing = false;
+
     return temp_ret_ptr;
 }
 
-
+#ifdef Release
 __declspec(dllexport) int __stdcall gen_chain_word(char* words[], int len, char* result[], char head, char tail, bool enable_loop) {
     return Core::gen_chain_word(words, len, result, head, tail, enable_loop);
 }
@@ -260,5 +300,5 @@ __declspec(dllexport) int __stdcall gen_chain_word_unique(char* words[], int len
 __declspec(dllexport) int __stdcall gen_chain_char(char* words[], int len, char* result[], char head, char tail, bool enable_loop) {
     return Core::gen_chain_char(words, len, result, head, tail, enable_loop);
 }
-
+#endif // Release
 #endif

@@ -141,7 +141,7 @@ protected:
         }
     }
 public:
-	MaxHandler(char head, char tail, bool allowRing, vector<string> word[26][26], char **result) : 
+	MaxHandler(char head, char tail, bool allowRing, StringSet word[26][26], char **result) : 
 	Handler(head, tail, allowRing, word, result), depth(0) {
         memset(dfn, 0, sizeof(dfn));
         memset(low, 0, sizeof(low));

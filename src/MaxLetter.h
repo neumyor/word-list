@@ -17,7 +17,7 @@ private:
         int selfLength[26];
         FOR_ALPHA(i) {
             if (edge[i][i]) {
-                selfLength[i] = (int)word[i][i].back().length();
+                selfLength[i] = (int)word[i][i].back()->length();
             } else {
                 selfLength[i] = 0;
             }
@@ -36,8 +36,8 @@ private:
             q.pop();
             FOR_ALPHA(i) {
                 if (i != front && edge[front][i]) {
-                    if (((int)word[front][i].back().length()) + selfLength[i] + dp[front] > dp[i]) {
-                        dp[i] = (int)word[front][i].back().length() + selfLength[i] + dp[front];
+                    if (((int)word[front][i].back()->length()) + selfLength[i] + dp[front] > dp[i]) {
+                        dp[i] = (int)word[front][i].back()->length() + selfLength[i] + dp[front];
                         last[i] = front;
                     }
                     inDegreee[i]--;
@@ -97,7 +97,7 @@ private:
         for (auto& i : sccElement[sccBelong[start]]) {
             if (edge[cur][i] > used[cur][i]) {
                 used[cur][i]++;
-                dfs(i, start, length + 1, totLetter + (int)word[cur][i][(long long)edge[cur][i] - used[cur][i]].length());
+                dfs(i, start, length + 1, totLetter + (int)word[cur][i][(long long)edge[cur][i] - used[cur][i]]->length());
                 used[cur][i]--;
             }
         }
@@ -164,8 +164,8 @@ private:
                 if (sccEdge[front][i]) {
                     for (auto& j : sccElement[front]) {
                         for (auto& k : sccElement[i]) {
-                            if (edge[j][k] && maxOutLetter[j] + (int)word[j][k].back().length() > maxInLetter[k]) {
-                                maxInLetter[k] = maxOutLetter[j] + (int)word[j][k].back().length();
+                            if (edge[j][k] && maxOutLetter[j] + (int)word[j][k].back()->length() > maxInLetter[k]) {
+                                maxInLetter[k] = maxOutLetter[j] + (int)word[j][k].back()->length();
                                 outerLast[k] = j;
                             }
                         }
@@ -194,7 +194,7 @@ private:
         while (final >= 0) {
             stk.push(final);
             stk.push(innerLast[final]);
-            final = outerLast[final];
+            final = outerLast[innerLast[final]];
         }
         if (stk.size() < 2) {
             return 0;
@@ -206,6 +206,7 @@ private:
             int* finish = maxRoute[entrance][exit] + maxLength[entrance][exit];
             for (int* i = maxRoute[entrance][exit] + 1; i <= finish; i++) {
                 appendToResult(word[*(i - 1)][*i].back());
+                delete word[*(i - 1)][*i].back();
                 word[*(i - 1)][*i].pop_back();
             }
             stk.pop();
@@ -213,13 +214,14 @@ private:
                 break;
             }
             appendToResult(word[exit][stk.top()].back());
+            delete word[exit][stk.top()].back();
             word[exit][stk.top()].pop_back();
         }
         return ret;
     }
 
 public:
-	MaxLetter(char head, char tail, bool allowRing, vector<string> word[26][26], char **result) :
+	MaxLetter(char head, char tail, bool allowRing, StringSet word[26][26], char **result) :
 	MaxHandler(head, tail, allowRing, word, result) {
         memset(route, 0, sizeof(route));
         memset(used, 0, sizeof(used));
@@ -239,4 +241,3 @@ public:
         return allowRingHandler();
 	}
 };
-

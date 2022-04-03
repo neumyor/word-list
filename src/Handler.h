@@ -6,7 +6,7 @@ protected:
 	char headLetter;
 	char tailLetter;
 	bool allowRing;
-	vector<string> word[26][26];
+	vector<string*> word[26][26];
 	int edge[26][26];
     int line;
     char **result;
@@ -18,10 +18,10 @@ protected:
         }
     }
 
-    void appendToResult(string &s) {    
-        result[line] = (char*)malloc(s.size() + 1);
-        my_strcpy(result[line], s.c_str(), (int)s.size());
-        result[line][s.size()] = '\0';
+    void appendToResult(string *s) {    
+        result[line] = (char*)malloc(s->size() + 1);
+        my_strcpy(result[line], s->c_str(), (int)s->size());
+        result[line][s->size()] = '\0';
         line++;
     }
 
@@ -49,10 +49,12 @@ protected:
     }
 
 private:
-	void setEdge(vector<string> word[26][26]) {
+	void setEdge(StringSet word[26][26]) {
 		FOR_ALPHA(i) {
 			FOR_ALPHA(j) {
-				this->word[i][j] = move(word[i][j]);
+                for (auto &k : word[i][j]) {
+				    this->word[i][j].push_back(k);
+                }
 				edge[i][j] = (int)this->word[i][j].size();
 			}
 		}
@@ -133,14 +135,24 @@ protected:
         return cnt != 26;
     }
 public:
-	Handler(vector<string> word[26][26], char **result) : result(result), line(0) {
+	Handler(StringSet word[26][26], char **result) : result(result), line(0) {
 		setEdge(word);
 	}
 
-	Handler(char head, char tail, bool allowRing, vector<string> word[26][26], char **result) : headLetter(head), tailLetter(tail),
+	Handler(char head, char tail, bool allowRing, StringSet word[26][26], char **result) : headLetter(head), tailLetter(tail),
 		allowRing(allowRing), result(result), line(0) {
 		setEdge(word);
 	}
+
+    ~Handler() {
+        FOR_ALPHA(i) {
+            FOR_ALPHA(j) {
+                for (auto &k : word[i][j]) {
+                    delete k;
+                }
+            }
+        }
+    }
 
 	virtual int handle() = 0;
 };

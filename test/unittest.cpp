@@ -94,8 +94,7 @@ namespace unittest
 			std::vector<char*> words(0);
 			int inputSize = generateExample(words, "ab bc cd de");
 			Assert::AreEqual(Core::gen_chains_all(&(words[0]), inputSize, result), correctLen);
-			Assert::AreEqual(result[0], std::to_string(correctLen).c_str());
-			for (int i = 1; i <= correctLen; i++) {
+			for (int i = 0; i < correctLen; i++) {
 				Assert::IsTrue(validateNChain(result[i]));
 			}
 		}
@@ -106,8 +105,7 @@ namespace unittest
 			std::vector<char*> words(0);
 			int inputSize = generateExample(words, "image my encounter repeat tim");
 			Assert::AreEqual(Core::gen_chains_all(&(words[0]), inputSize, result), correctLen);
-			Assert::AreEqual(result[0], std::to_string(correctLen).c_str());
-			for (int i = 1; i <= correctLen; i++) {
+			for (int i = 0; i < correctLen; i++) {
 				Assert::IsTrue(validateNChain(result[i]));
 			}
 		}
@@ -120,8 +118,7 @@ namespace unittest
 			int inputSize = generateExample(words, "impose insufficient inpolite sucide close loss");
 
 			Assert::AreEqual(Core::gen_chains_all(&(words[0]), inputSize, result), correctLen);
-			Assert::AreEqual(result[0], std::to_string(correctLen).c_str());
-			for (int i = 1; i <= correctLen; i++) {
+			for (int i = 0; i < correctLen; i++) {
 				Assert::IsTrue(validateNChain(result[i]));
 			}
 		}
@@ -134,8 +131,7 @@ namespace unittest
 			int inputSize = generateExample(words, "inter release debug gel loi");
 
 			Assert::AreEqual(Core::gen_chains_all(&(words[0]), inputSize, result), correctLen);
-			Assert::AreEqual(result[0], std::to_string(correctLen).c_str());
-			for (int i = 1; i <= correctLen; i++) {
+			for (int i = 0; i < correctLen; i++) {
 				Assert::IsTrue(validateNChain(result[i]));
 			}
 		}
@@ -148,8 +144,7 @@ namespace unittest
 			int inputSize = generateExample(words, "test losl glg ksk sks slt tsl");
 
 			Assert::AreEqual(Core::gen_chains_all(&(words[0]), inputSize, result), correctLen);
-			Assert::AreEqual(result[0], std::to_string(correctLen).c_str());
-			for (int i = 1; i <= correctLen; i++) {
+			for (int i = 0; i < correctLen; i++) {
 				Assert::IsTrue(validateNChain(result[i]));
 			}
 		}
@@ -162,8 +157,7 @@ namespace unittest
 			int inputSize = generateExample(words, "test losl glg ksk sks");
 
 			Assert::AreEqual(Core::gen_chains_all(&(words[0]), inputSize, result), correctLen);
-			Assert::AreEqual(result[0], std::to_string(correctLen).c_str());
-			for (int i = 1; i <= correctLen; i++) {
+			for (int i = 0; i < correctLen; i++) {
 				Assert::IsTrue(validateNChain(result[i]));
 			}
 		}
@@ -315,28 +309,59 @@ namespace unittest
 			Assert::AreEqual(Core::gen_chain_word(&(words[0]), inputSize, result, 'i', 'z', true), 0);
 		}
 
-		TEST_METHOD(TestCmdError_1_1) {
-			string cmd = "wordlist.exe -w temp.txt -h G";
+		TEST_METHOD(TestCmd_1) {
+			string cmd = "wordlist.exe -n noring.txt";
 			cmd += '\0';
 			char* cmdArray = (char*)malloc(sizeof(char) * (cmd.size() + 1));
 			if (cmdArray != NULL) {
 				strcpy_s(cmdArray, cmd.size(), cmd.c_str());
 			}
-			Assert::AreEqual("need lowercase letter after \'-h\'\n", call_by_cmd(cmd.size(), cmdArray));
+			Assert::AreEqual("6\nab bc\nab bc cd\nab bc cd de\nbc cd\nbc cd de\ncd de\nreturn value: 6\n", call_by_cmd(cmd.size(), cmdArray));
+		}
+
+		TEST_METHOD(TestCmd_2) {
+			string cmd = "wordlist.exe -c temp.txt -r";
+			cmd += '\0';
+			char* cmdArray = (char*)malloc(sizeof(char) * (cmd.size() + 1));
+			if (cmdArray != NULL) {
+				strcpy_s(cmdArray, cmd.size(), cmd.c_str());
+			}
+			Assert::AreEqual("de\nea\nab\nbc\ncd\ndd\ndb\nreturn value: 14\n", call_by_cmd(cmd.size(), cmdArray));
+		}
+
+		TEST_METHOD(TestCmd_3) {
+			string cmd = "wordlist.exe -w temp.txt -r";
+			cmd += '\0';
+			char* cmdArray = (char*)malloc(sizeof(char) * (cmd.size() + 1));
+			if (cmdArray != NULL) {
+				strcpy_s(cmdArray, cmd.size(), cmd.c_str());
+			}
+			Assert::AreEqual("de\nea\nab\nbc\ncd\ndd\ndb\nreturn value: 7\n", call_by_cmd(cmd.size(), cmdArray));
+		}
+
+
+		TEST_METHOD(TestCmdError_1_1) {
+			string cmd = "wordlist.exe -c temp.txt -another.txt";
+			cmd += '\0';
+			char* cmdArray = (char*)malloc(sizeof(char) * (cmd.size() + 1));
+			if (cmdArray != NULL) {
+				strcpy_s(cmdArray, cmd.size(), cmd.c_str());
+			}
+			Assert::AreEqual("multiple files found\n", call_by_cmd(cmd.size(), cmdArray));
 		}
 
 		TEST_METHOD(TestCmdError_1_2) {
-			string cmd = "wordlist.exe -w temp.txt -t G";
+			string cmd = "wordlist.exe -n temp.txt -g";
 			cmd += '\0';
 			char* cmdArray = (char*)malloc(sizeof(char) * (cmd.size() + 1));
 			if (cmdArray != NULL) {
 				strcpy_s(cmdArray, cmd.size(), cmd.c_str());
 			}
-			Assert::AreEqual("need lowercase letter after \'-t\'\n", call_by_cmd(cmd.size(), cmdArray));
+			Assert::AreEqual("-g is neither a text file nor an argument\n", call_by_cmd(cmd.size(), cmdArray));
 		}
 
 		TEST_METHOD(TestCmdError_2_1) {
-			string cmd = "wordlist.exe -w temp.txt -h k -h g";
+			string cmd = "wordlist.exe -w temp.txt -h K -h g";
 			cmd += '\0';
 			char* cmdArray = (char*)malloc(sizeof(char) * (cmd.size() + 1));
 			if (cmdArray != NULL) {
@@ -412,7 +437,7 @@ namespace unittest
 			if (cmdArray != NULL) {
 				strcpy_s(cmdArray, cmd.size(), cmd.c_str());
 			}
-			Assert::AreEqual("need lowercase letter after \'-h\'\n", call_by_cmd(cmd.size(), cmdArray));
+			Assert::AreEqual("need letter after \'-h\'\n", call_by_cmd(cmd.size(), cmdArray));
 		}
 
 		TEST_METHOD(TestCmdError_8_2) {
@@ -422,7 +447,17 @@ namespace unittest
 			if (cmdArray != NULL) {
 				strcpy_s(cmdArray, cmd.size(), cmd.c_str());
 			}
-			Assert::AreEqual("need lowercase letter after \'-t\'\n", call_by_cmd(cmd.size(), cmdArray));
+			Assert::AreEqual("need letter after \'-t\'\n", call_by_cmd(cmd.size(), cmdArray));
+		}
+
+		TEST_METHOD(TestCmdError_9) {
+			string cmd = "wordlist.exe -w temp.txt -n -c";
+			cmd += '\0';
+			char* cmdArray = (char*)malloc(sizeof(char) * (cmd.size() + 1));
+			if (cmdArray != NULL) {
+				strcpy_s(cmdArray, cmd.size(), cmd.c_str());
+			}
+			Assert::AreEqual("multiple type\n", call_by_cmd(cmd.size(), cmdArray));
 		}
 
 		TEST_METHOD(TestCmdWarning_1) {
