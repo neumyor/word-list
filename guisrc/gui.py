@@ -2,8 +2,6 @@
 
 import ctypes
 import os
-import subprocess
-import sys
 
 import wx
 
@@ -92,7 +90,7 @@ class MyFrame(wx.Frame):
 
     def start(self, evt):
         print("start execution")
-        cmd = 'Word-Chain.exe '
+        cmd = 'Wordlist.exe '
         if self.is_h:
             cmd += f"-h {self.first_char_input.GetValue()} "
         if self.is_t:
@@ -154,13 +152,13 @@ class MyFrame(wx.Frame):
 
     def command_exe(self, command):
         try:
-            dll = ctypes.windll.LoadLibrary("core.dll")
+            dll = ctypes.windll.LoadLibrary("command.dll")
             call_func = dll.call_by_cmd
             call_func.argtypes = [ctypes.c_int, ctypes.POINTER(ctypes.c_char)]  # 参数类型为char指针
             call_func.restype = ctypes.c_char_p  # 返回类型为char指针
-            result = dll.call_by_cmd(len(command), ctypes.c_char_p(command.encode('utf-8'))).decode("utf-8")
+            result = dll.call_by_cmd(len(command), ctypes.c_char_p(command.encode('utf-8'))).decode('gbk')
             self.output_box.AppendText("执行" + command + '\n')
-            self.output_box.SetDefaultStyle(wx.TextAttr(wx.BLUE))  # 将后面输出字段设置为蓝色
+            self.output_box.SetDefaultStyle(wx.TextAttr(wx.RED))  # 将后面输出字段设置为蓝色
             self.output_box.AppendText(result)
             self.output_box.SetDefaultStyle(wx.TextAttr(wx.NullColour))  # 将后面输出字段设置为默认颜色（黑色）
         except Exception as e:
@@ -168,6 +166,15 @@ class MyFrame(wx.Frame):
             self.output_box.AppendText('ERROR！ ' + command + ' failed!' + '\n')
             self.output_box.AppendText(str(e))
             self.output_box.SetDefaultStyle(wx.TextAttr(wx.NullColour))  # 将后面输出字段设置为默认颜色（黑色）
+
+        self.output_box.SetDefaultStyle(wx.TextAttr(wx.BLUE))  # 将后面输出字段设置为蓝色
+
+        with open('solution.txt', 'r') as f:
+            result = f.readlines()
+            for line in result:
+                self.output_box.AppendText(line)
+
+        self.output_box.SetDefaultStyle(wx.TextAttr(wx.NullColour))  # 将后面输出字段设置为默认颜色（黑色）
 
         self.output_box.AppendText('执行结束\r\n')
         self.output_box.AppendText('-------\r\n')
