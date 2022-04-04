@@ -21,15 +21,24 @@ enum class HandlerType {
     UNKNOWN
 };
 
+struct StringCmp {
+    bool operator() (const string *a, const string *b) const {
+        if (a->length() != b->length()) {
+            return a->length() < b->length();
+        }
+        return a->compare(*b) < 0;
+    }
+};
+typedef set<string*, StringCmp> StringSet;
 
 #define FOR_ALPHA(x) for(int x = 0; x < 26; x++)
 #define FOR_SCC(x) for(int x = 0; x < sccNumber; x++)
 
 #define DEBUG true
-#define  DEBUG_REACHED\
-    if (DEBUG) { \
-        cout << __FILE__ << " " << __LINE__ << endl; \
+#define  DEBUG_REACHED                                  \
+    if (DEBUG) {                                        \
+        cout << __FILE__ << " " << __LINE__ << endl;    \
     }
-#define MAX_RESULT_LINE 10000
+#define MAX_RESULT_LINE 20000
 #pragma warning(disable:4251)
 #endif

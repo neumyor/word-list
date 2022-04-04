@@ -6,7 +6,7 @@ private:
     int ans[26];
     int last[26];
 public:
-	DistinctInitial(vector<string> word[26][26], char **result) : Handler(word, result) {
+	DistinctInitial(StringSet word[26][26], char **result) : Handler(word, result) {
         memset(ans, 0, sizeof(ans));
         memset(last, 0, sizeof(last));
     }
