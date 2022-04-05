@@ -316,7 +316,7 @@ namespace unittest
 			if (cmdArray != NULL) {
 				strcpy_s(cmdArray, cmd.size(), cmd.c_str());
 			}
-			Assert::AreEqual("6\nab bc\nab bc cd\nab bc cd de\nbc cd\nbc cd de\ncd de\nreturn value: 6\n", call_by_cmd(cmd.size(), cmdArray));
+			Assert::AreEqual("6\nab bc\nab bc cd\nab bc cd de\nbc cd\nbc cd de\ncd de\n", call_by_cmd(cmd.size(), cmdArray));
 		}
 
 		TEST_METHOD(TestCmd_2) {
@@ -326,7 +326,7 @@ namespace unittest
 			if (cmdArray != NULL) {
 				strcpy_s(cmdArray, cmd.size(), cmd.c_str());
 			}
-			Assert::AreEqual("de\nea\nab\nbc\ncd\ndd\ndb\nreturn value: 14\n", call_by_cmd(cmd.size(), cmdArray));
+			Assert::AreEqual("de\nea\nab\nbc\ncd\ndd\ndb\n", call_by_cmd(cmd.size(), cmdArray));
 		}
 
 		TEST_METHOD(TestCmd_3) {
@@ -336,7 +336,7 @@ namespace unittest
 			if (cmdArray != NULL) {
 				strcpy_s(cmdArray, cmd.size(), cmd.c_str());
 			}
-			Assert::AreEqual("de\nea\nab\nbc\ncd\ndd\ndb\nreturn value: 7\n", call_by_cmd(cmd.size(), cmdArray));
+			Assert::AreEqual("de\nea\nab\nbc\ncd\ndd\ndb\n", call_by_cmd(cmd.size(), cmdArray));
 		}
 
 

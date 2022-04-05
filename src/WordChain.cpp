@@ -213,7 +213,7 @@ static void read(int argc, char *argv[]) {
     if (ret > MAX_RESULT_LINE) {
         cout << "..." << endl;
     }
-    cout << "return value: " << ret << endl;
+    // cout << "return value: " << ret << endl;
 }
 
 int main(int argc, char *argv[]) {
